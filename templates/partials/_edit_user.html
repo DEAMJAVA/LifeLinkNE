@@ -1,0 +1,60 @@
+{% extends "dashboard_base.html" %}
+{% set active = "profile" %}
+{% block title %}Profile — LifeLink NE{% endblock %}
+{% block content %}
+<div class="content-header"><h2>Edit Profile</h2></div>
+
+<form class="panel-form" method="post" action="{{ url_for('dashboard.profile') }}">
+  <div class="grid-3">
+    <label>First name
+      <input type="text" name="first_name" value="{{ first }}" required>
+    </label>
+    <label>Middle name
+      <input type="text" name="middle_name" value="{{ middle }}">
+    </label>
+    <label>Last name
+      <input type="text" name="last_name" value="{{ last }}">
+    </label>
+  </div>
+
+  <label>Email
+    <input type="email" name="email" value="{{ user.email }}" required>
+  </label>
+
+  <div class="grid-2">
+    <label>Birthday
+      <input type="date" name="birthday" value="{{ user.birthday }}">
+    </label>
+    <label>Blood group
+      <select name="blood_group">
+        {% for bg in blood_groups %}
+          <option value="{{ bg }}" {% if user.blood_group == bg %}selected{% endif %}>{{ bg }}</option>
+        {% endfor %}
+      </select>
+    </label>
+  </div>
+
+  <label>Home location
+    <select name="home_location" required>
+      {% for loc in locations %}
+        <option value="{{ loc }}" {% if current_home_label == loc %}selected{% endif %}>{{ loc }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Disabilities
+    <textarea name="disabilities" rows="2">{{ user.disabilities }}</textarea>
+  </label>
+  <label>Diseases
+    <textarea name="diseases" rows="2">{{ user.diseases }}</textarea>
+  </label>
+  <label>Allergies
+    <textarea name="allergies" rows="2">{{ user.allergies }}</textarea>
+  </label>
+  <label>Important emergency contacts
+    <textarea name="important_contacts" rows="2">{{ user.important_contacts }}</textarea>
+  </label>
+
+  <button class="btn btn-primary full" type="submit">Save changes</button>
+</form>
+{% endblock %}

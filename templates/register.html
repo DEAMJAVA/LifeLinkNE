@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Sign up — LifeLink NE{% endblock %}
+{% block body %}
+<div class="landing">
+  <form class="auth-card wide" method="post" action="{{ url_for('auth.register') }}" id="register-form">
+    <h1 class="brand small">LIFE<span>LINK</span> NE</h1>
+
+    <div class="grid-3">
+      <label>First name
+        <input type="text" name="first_name" value="{{ form.get('first_name', '') }}" required>
+      </label>
+      <label>Middle name
+        <input type="text" name="middle_name" value="{{ form.get('middle_name', '') }}">
+      </label>
+      <label>Last name
+        <input type="text" name="last_name" value="{{ form.get('last_name', '') }}">
+      </label>
+    </div>
+
+    <label>Email
+      <input type="email" name="email" value="{{ form.get('email', '') }}" required>
+    </label>
+
+    <div class="grid-2">
+      <label>Password
+        <input type="password" name="password" required>
+      </label>
+      <label>Confirm password
+        <input type="password" name="confirm_password" required>
+      </label>
+    </div>
+    <p class="hint">At least 8 characters, one digit, one symbol (!@#$%^&*).</p>
+
+    <div class="grid-2">
+      <label>Birthday
+        <input type="date" name="birthday" value="{{ form.get('birthday', '') }}">
+      </label>
+      <label>Blood group
+        <select name="blood_group">
+          {% for bg in blood_groups %}
+            <option value="{{ bg }}" {% if form.get('blood_group') == bg %}selected{% endif %}>{{ bg }}</option>
+          {% endfor %}
+        </select>
+      </label>
+    </div>
+
+    <label>Home location
+      <select name="home_location" required>
+        <option value="">Choose a state...</option>
+        {% for loc in locations %}
+          <option value="{{ loc }}" {% if form.get('home_location') == loc %}selected{% endif %}>{{ loc }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <input type="hidden" name="exact_location" id="exact_location" value="{{ form.get('exact_location', '') }}">
+    <p class="hint" id="geo-status">Detecting your live location for emergency use…</p>
+
+    <label>Disabilities <span class="optional">(optional)</span>
+      <textarea name="disabilities" rows="2">{{ form.get('disabilities', '') }}</textarea>
+    </label>
+    <label>Diseases <span class="optional">(optional)</span>
+      <textarea name="diseases" rows="2">{{ form.get('diseases', '') }}</textarea>
+    </label>
+    <label>Allergies <span class="optional">(optional)</span>
+      <textarea name="allergies" rows="2">{{ form.get('allergies', '') }}</textarea>
+    </label>
+    <label>Important emergency contacts
+      <textarea name="important_contacts" rows="2">{{ form.get('important_contacts', '') }}</textarea>
+    </label>
+
+    <button class="btn btn-primary full" type="submit">Create account</button>
+    <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a></p>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  captureGeolocation(document.getElementById('exact_location'), document.getElementById('geo-status'));
+</script>
+{% endblock %}

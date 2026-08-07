@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="dashboard">
+  <aside class="sidebar">
+    <div class="sidebar-brand">LIFE<span>LINK</span> <small>NE</small></div>
+    <nav>
+      <a class="nav-link {{ 'active' if active=='disasters' }}" href="{{ url_for('dashboard.disasters') }}">🏠 Live Feed</a>
+      <a class="nav-link {{ 'active' if active=='disaster_map' }}" href="{{ url_for('dashboard.disaster_map') }}">🗺️ Disaster Intensity Map</a>
+      <a class="nav-link sos {{ 'active' if active=='report' }}" href="{{ url_for('dashboard.report_disaster') }}">🆘 SOS — Report Disaster</a>
+      <a class="nav-link {{ 'active' if active=='blood_donations' }}" href="{{ url_for('dashboard.blood_donations') }}">🩸 Blood Donation Network</a>
+      {% if current_user and (current_user.is_health_worker or current_user.is_admin) %}
+        <a class="nav-link {{ 'active' if active=='health_records' }}" href="{{ url_for('dashboard.health_records') }}">🩺 Health Records</a>
+      {% endif %}
+      <a class="nav-link" href="{{ url_for('dashboard.emergency_qr') }}">🔳 Generate emergency QR</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-location">📍 {{ location_display_name(current_user.home_location) if current_user else '' }}</div>
+      <div class="topbar-user">
+        <span>{{ current_user.username if current_user else '' }}</span>
+        {% if current_user and current_user.is_admin %}<span class="role-badge">Admin</span>{% endif %}
+        {% if current_user and current_user.is_health_worker %}<span class="role-badge health">Health Worker</span>{% endif %}
+        <div class="user-menu">
+          <button class="user-toggle" type="button" onclick="document.getElementById('user-dropdown').classList.toggle('open')">▾</button>
+          <div class="user-dropdown" id="user-dropdown">
+            <a href="{{ url_for('dashboard.profile') }}">Profile</a>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

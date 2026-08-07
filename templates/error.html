@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} — LifeLink NE{% endblock %}
+{% block body %}
+<div class="landing">
+  <div class="landing-card">
+    <h1 class="brand small">{{ code }}</h1>
+    <p class="tagline">{{ message }}</p>
+    <a class="btn btn-primary" href="{{ url_for('auth.start') }}">Go home</a>
+  </div>
+</div>
+{% endblock %}

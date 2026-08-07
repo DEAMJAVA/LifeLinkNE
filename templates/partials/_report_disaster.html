@@ -1,0 +1,51 @@
+{% extends "dashboard_base.html" %}
+{% set active = "report" %}
+{% block title %}Report a disaster — LifeLink NE{% endblock %}
+{% block content %}
+<div class="content-header"><h2>🆘 Report a Disaster</h2></div>
+
+<form class="panel-form" method="post" action="{{ url_for('dashboard.report_disaster') }}">
+  <label>Severity
+    <select id="severity-select">
+      <option value="All">All</option>
+      {% for sev in catalog.keys() %}
+        <option value="{{ sev }}">{{ sev }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Disaster type
+    <select name="disaster" id="disaster-select" required>
+      <option value="">Choose...</option>
+      {% for sev, types in catalog.items() %}
+        {% for t in types %}
+          <option value="{{ t }}" data-severity="{{ sev }}">{{ t }}</option>
+        {% endfor %}
+      {% endfor %}
+    </select>
+  </label>
+
+  <input type="hidden" name="severity" id="severity-hidden" value="">
+
+  <label>Details <span class="optional">(optional)</span>
+    <textarea name="notes" rows="3" placeholder="e.g. water entering homes near XYZ village, embankment showing cracks, number of people affected..."></textarea>
+  </label>
+
+  <input type="hidden" name="lat" id="report-lat">
+  <input type="hidden" name="lon" id="report-lon">
+  <p class="hint" id="report-geo-status">Detecting your current location…</p>
+
+  <button class="btn btn-primary full" type="submit">Send SOS report</button>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  filterDisasterOptions(document.getElementById('severity-select'), document.getElementById('disaster-select'));
+  document.querySelector('.panel-form').addEventListener('submit', function () {
+    var opt = document.getElementById('disaster-select').selectedOptions[0];
+    document.getElementById('severity-hidden').value = opt ? opt.dataset.severity : '';
+  });
+  captureGeolocation2(document.getElementById('report-lat'), document.getElementById('report-lon'),
+                       document.getElementById('report-geo-status'));
+</script>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "dashboard_base.html" %}
+{% set active = "health_records" %}
+{% block title %}Health Records — LifeLink NE{% endblock %}
+{% block content %}
+<div class="content-header">
+  <h2>🩺 Health Records Lookup</h2>
+</div>
+
+<p class="hint" style="margin-bottom: 16px;">
+  Search by name to view the health information a person has provided in
+  their profile — blood group, diseases, allergies, disabilities, and
+  emergency contacts. Visible to health workers and admins only.
+</p>
+
+<form class="panel-form" method="get" action="{{ url_for('dashboard.health_records') }}">
+  <label>Search by name
+    <input type="text" name="q" value="{{ query }}" placeholder="e.g. Priya Sharma" autofocus>
+  </label>
+  <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+{% if query and not results %}
+  <p class="empty-state">No matching people found for “{{ query }}”.</p>
+{% endif %}
+
+{% if results %}
+<div class="card-grid">
+  {% for u in results %}
+    <div class="card">
+      <h3>{{ u.username }}</h3>
+      <p class="card-sub">Birthday: {{ u.birthday or 'Not provided' }} · Blood group: {{ u.blood_group or 'Not provided' }}</p>
+      <p class="card-sub">🩹 Disabilities: {{ u.disabilities or 'None' }}</p>
+      <p class="card-sub">🧬 Diseases: {{ u.diseases or 'None' }}</p>
+      <p class="card-sub">⚠️ Allergies: {{ u.allergies or 'None' }}</p>
+      <p class="card-sub">📞 Emergency contacts: {{ u.important_contacts or 'None' }}</p>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

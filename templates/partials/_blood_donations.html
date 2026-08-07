@@ -1,0 +1,65 @@
+{% extends "dashboard_base.html" %}
+{% set active = "blood_donations" %}
+{% block title %}Blood Donation Network — LifeLink NE{% endblock %}
+{% block content %}
+<div class="content-header">
+  <h2>🩸 Blood Donation Network</h2>
+  {% if current_user.is_admin %}
+    <form method="post" action="{{ url_for('dashboard.clear_blood_donations') }}"
+          onsubmit="return confirm('Clear ALL donor entries?');">
+      <button class="btn btn-danger" type="submit">Clear all</button>
+    </form>
+  {% endif %}
+</div>
+
+<p class="hint" style="margin-bottom: 16px;">
+  Sign up as an available donor so people nearby can reach you directly.
+  This is a donor directory only — there's no separate blood-request board.
+</p>
+
+<details class="collapsible">
+  <summary>+ Sign up to donate</summary>
+  <form class="panel-form" method="post" action="{{ url_for('dashboard.blood_donations') }}">
+    <label>Your name
+      <input type="text" name="name" required>
+    </label>
+    <label>Blood type
+      <select name="blood_type" required>
+        {% for bg in blood_groups %}<option value="{{ bg }}">{{ bg }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Contact number
+      <input type="text" name="contact" required>
+    </label>
+    <input type="hidden" name="lat" id="don-lat">
+    <input type="hidden" name="lon" id="don-lon">
+    <button class="btn btn-primary" type="submit">Sign up</button>
+  </form>
+</details>
+
+{% if not donations %}
+  <p class="empty-state">No donors signed up yet. Be the first!</p>
+{% endif %}
+
+<div class="card-grid">
+  {% for d in donations %}
+    <div class="card">
+      <h3>{{ d.blood_type }}</h3>
+      <p class="card-sub">By: {{ d.name }} · 📞 {{ d.contact }} · {{ d.location_label }}</p>
+      <div class="map" data-lat="{{ d.location.split(',')[0] }}" data-lon="{{ d.location.split(',')[1] }}"></div>
+      {% if d.can_delete %}
+        <form method="post" action="{{ url_for('dashboard.delete_blood_donation', row_id=d.id) }}"
+              onsubmit="return confirm('Delete this entry?');">
+          <button class="btn btn-danger small" type="submit">Delete</button>
+        </form>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  initMaps();
+  captureGeolocation2(document.getElementById('don-lat'), document.getElementById('don-lon'), null);
+</script>
+{% endblock %}

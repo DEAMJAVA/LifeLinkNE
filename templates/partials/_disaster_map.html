@@ -1,0 +1,41 @@
+{% extends "dashboard_base.html" %}
+{% set active = "disaster_map" %}
+{% block title %}Disaster Intensity Map — LifeLink NE{% endblock %}
+{% block content %}
+<div class="content-header">
+  <h2>🗺️ Disaster Intensity Map</h2>
+  <span class="card-time">{{ total_reports }} report{{ '' if total_reports == 1 else 's' }} total</span>
+</div>
+
+<p class="hint" style="margin-bottom: 16px;">
+  Brighter red means more reports and/or more severe disasters clustered in
+  that area. Green means only light, scattered reports.
+</p>
+
+<div id="intensity-map" class="intensity-map"></div>
+
+<div class="heat-legend">
+  <span>Low</span>
+  <div class="heat-legend-bar"></div>
+  <span>High</span>
+</div>
+
+{% if hotspots %}
+<h3 class="hotspot-title">Top affected areas</h3>
+<div class="card-grid">
+  {% for h in hotspots %}
+    <div class="card" style="border-left-color: {{ h.color }}">
+      <div class="card-top">
+        <span class="badge" style="background: {{ h.color }}">{{ h.count }} report{{ '' if h.count == 1 else 's' }}</span>
+      </div>
+      <h3>{{ h.label }}</h3>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script>
+  initHeatmap('intensity-map', {{ heat_points_json | safe }}, [{{ map_center[0] }}, {{ map_center[1] }}], {{ map_zoom }});
+</script>
+{% endblock %}
